@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+  frontend:
+    image: parthdhemeliya/personal-finance-frontend:latest
+    environment:
+      - NEXT_PUBLIC_API_URL=http://host.docker.internal:5050/api
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  backend:
+    image: parthdhemeliya/personal-finance-backend:latest
+    ports:
+      - "5050:5050"
+    environment:
+      - MONGOURI=mongodb://mongo:27017/finance-tracker
+      - JWT_SECRET=519227c555aa3a38968d3b0aa8b99b6c0cbd6d2a4a8dce930de641b64a035332539ffe2f9fb38364daad6d6d91191eb694c30d3a1191ade14418919a28d0ab09
+    deploy:
+      replicas: 1
+
+  mongo:
+    image: mongo:6
+    volumes:
+      - mongo-data:/data/db
+    deploy:
+      replicas: 1
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./backend/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    deploy:
+      replicas: 1
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3003:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./backend/grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    depends_on:
+      - prometheus
+    deploy:
+      replicas: 1
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    deploy:
+      replicas: 1
+
+volumes:
+  mongo-data:
+  prometheus-data:
+  grafana-data:
