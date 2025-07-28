@@ -122,3 +122,7 @@ Thumbs.db
 
 # Turbo
 .turbo
+
+# Leftover folders from migration
+Personal-Finance-Tracker-Frontend/
+Personal-Finance-Tracker-Backend/
