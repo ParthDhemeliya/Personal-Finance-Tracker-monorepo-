@@ -61,8 +61,12 @@ const transactionSchema = new Schema<ITransaction>(
       required: true,
       default: () => new Date(),
       validate: {
-        validator: (value: Date) => value <= new Date(),
-        message: 'Date cannot be in the future',
+        validator: (value: Date) => {
+          const today = new Date();
+          const maxFutureDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+          return value <= maxFutureDate;
+        },
+        message: 'Date cannot be more than 7 days in the future',
       },
     },
 

@@ -63,6 +63,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static('public'));
 
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`, {
+    body: req.body,
+    contentType: req.headers['content-type'],
+    authorization: req.headers.authorization ? 'Bearer ***' : 'missing',
+    origin: req.headers.origin
+  });
+  next();
+});
+
 //  Metrics Middleware (records every request)
 app.use((req, res, next) => {
   const startEpoch = Date.now();

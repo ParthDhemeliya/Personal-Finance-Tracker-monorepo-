@@ -27,7 +27,7 @@ const protect = async (
 
     // 3. If still no token, return error
     if (!token) {
-      return next(new AppError('Not authorized, token missing', 401));
+      return next(new AppError('Not authorized, token missing. Please include token in Authorization header as "Bearer <token>" or in cookies', 401));
     }
 
     // 4. Verify token
