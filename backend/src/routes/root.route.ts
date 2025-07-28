@@ -1,15 +1,19 @@
 import { Router } from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 const router = Router();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 router.get('/', (req, res) => {
-  const filePath = path.join(__dirname, '../../public/index.html');
-  res.sendFile(filePath);
+  res.json({
+    message: 'Personal Finance Tracker API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      metrics: '/metrics',
+      auth: '/api/auth',
+      api: '/api/v1'
+    }
+  });
 });
 
 export default router;
