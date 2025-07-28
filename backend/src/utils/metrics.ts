@@ -17,7 +17,20 @@ const httpRequestCounter = new client.Counter({
   labelNames: ['method', 'route', 'status_code'],
 });
 
+const reqResTime = new client.Histogram({
+  name: 'req_res_time',
+  help: 'Time spent on request and response ',
+  labelNames: ['method', 'route', 'status_code'],
+  buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10],
+});
+
 register.registerMetric(httpRequestDurationMicroseconds);
 register.registerMetric(httpRequestCounter);
+register.registerMetric(reqResTime);
 
-export { register, httpRequestDurationMicroseconds, httpRequestCounter };
+export {
+  register,
+  httpRequestDurationMicroseconds,
+  httpRequestCounter,
+  reqResTime,
+};

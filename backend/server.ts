@@ -17,10 +17,12 @@ import budgetRoutes from './src/modules/budget/budget.routes.js';
 import categoryRoutes from './src/modules/category/category.routes.js';
 import savingsRoutes from './src/modules/savings/savings.routes.js';
 import { globalErrorHandler } from './src/middlewares/error.middleware.js';
+import responseTime from 'response-time';
 import {
   httpRequestCounter,
   httpRequestDurationMicroseconds,
   register,
+  reqResTime,
 } from './src/utils/metrics.js';
 
 dotenv.config();
@@ -67,7 +69,7 @@ app.use((req, res, next) => {
 
   res.on('finish', () => {
     const responseTimeInSeconds = (Date.now() - startEpoch) / 1000;
-    const route = req.route?.path || req.path;
+    const route = (req as any).route?.path || req.path;
 
     httpRequestDurationMicroseconds.observe(
       { method: req.method, route, status_code: res.statusCode },
@@ -83,6 +85,19 @@ app.use((req, res, next) => {
 
   next();
 });
+
+// Response time middleware
+app.use(
+  responseTime((req, res, time) => {
+    reqResTime
+      .labels({
+        method: req.method,
+        route: req.url,
+        status_code: res.statusCode,
+      })
+      .observe(time / 1000); // Convert milliseconds to seconds
+  }),
+);
 
 // Routes
 app.use('/', rootRoute);
