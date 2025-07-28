@@ -1,0 +1,8 @@
+{
+  "build": {
+    "env": {
+      "NPM_RC": "//registry.npmjs.org/"
+    },
+    "installCommand": "pnpm install"
+  }
+}

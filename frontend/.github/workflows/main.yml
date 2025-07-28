@@ -1,0 +1,25 @@
+name: Simulate Deploy Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Simulate EC2 Deployment
+        run: echo "Pipeline ran successfully. EC2 deploy step is skipped for testing."
