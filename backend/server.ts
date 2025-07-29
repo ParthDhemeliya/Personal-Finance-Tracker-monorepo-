@@ -23,6 +23,7 @@ import {
   httpRequestDurationMicroseconds,
   register,
   reqResTime,
+  customTotalRequests,
 } from './src/utils/metrics.js';
 
 dotenv.config();
@@ -81,6 +82,7 @@ app.use((req, res, next) => {
   res.on('finish', () => {
     const responseTimeInSeconds = (Date.now() - startEpoch) / 1000;
     const route = (req as any).route?.path || req.path;
+    const userId = (req as any).user?._id?.toString() || 'anonymous';
 
     httpRequestDurationMicroseconds.observe(
       { method: req.method, route, status_code: res.statusCode },
@@ -91,6 +93,13 @@ app.use((req, res, next) => {
       method: req.method,
       route,
       status_code: res.statusCode,
+    });
+
+    // Custom total requests metric
+    customTotalRequests.inc({
+      method: req.method,
+      endpoint: route,
+      user_id: userId,
     });
   });
 
