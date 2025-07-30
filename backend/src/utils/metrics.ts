@@ -24,21 +24,13 @@ const reqResTime = new client.Histogram({
   buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10],
 });
 
-const customTotalRequests = new client.Counter({
-  name: 'custom_total_requests',
-  help: 'Total number of custom requests received',
-  labelNames: ['method', 'endpoint', 'user_id'],
-});
-
 register.registerMetric(httpRequestDurationMicroseconds);
 register.registerMetric(httpRequestCounter);
 register.registerMetric(reqResTime);
-register.registerMetric(customTotalRequests);
 
 export {
   register,
   httpRequestDurationMicroseconds,
   httpRequestCounter,
   reqResTime,
-  customTotalRequests,
 };
