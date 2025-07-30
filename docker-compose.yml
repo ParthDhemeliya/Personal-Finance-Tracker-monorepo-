@@ -27,6 +27,25 @@ services:
     deploy:
       replicas: 1
 
+  # cAdvisor for Docker container monitoring
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    privileged: true
+    deploy:
+      replicas: 1
+    restart: unless-stopped
+
   prometheus:
     image: prom/prometheus:latest
     ports:

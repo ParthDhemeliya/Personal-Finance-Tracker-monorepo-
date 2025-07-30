@@ -13,3 +13,11 @@ scrape_configs:
     metrics_path: /metrics
     scheme: http
     scrape_interval: 15s
+
+  # cAdvisor for Docker container monitoring
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    metrics_path: /metrics
+    scheme: http
+    scrape_interval: 15s
